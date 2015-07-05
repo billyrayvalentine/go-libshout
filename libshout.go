@@ -76,6 +76,7 @@ type Shout struct {
 	User        string
 	Password    string
 	Mount       string
+	Name        string
 	Url         string
 	Genre       string
 	Description string
@@ -136,9 +137,14 @@ func (s *Shout) updateParameters() {
 	C.shout_set_mount(s.struc, p)
 	C.free(unsafe.Pointer(p))
 
+	// set mount name
+	p = C.CString(s.Name)
+	C.shout_set_name(s.struc, p)
+	C.free(unsafe.Pointer(p))
+
 	// set url
-	p = C.CString(s.Description)
-	C.shout_set_description(s.struc, p)
+	p = C.CString(s.Url)
+	C.shout_set_url(s.struc, p)
 	C.free(unsafe.Pointer(p))
 
 	// set genre
