@@ -71,18 +71,21 @@ func (e ShoutError) Error() string {
 }
 
 type Shout struct {
-	Host     string
-	Port     uint
-	User     string
-	Password string
-	Mount    string
-	Format   int
-	Protocol int
+	Host        string
+	Port        uint
+	User        string
+	Password    string
+	Mount       string
+	Url         string
+	Genre       string
+	Description string
+	Format      int
+	Protocol    int
 
 	// wrap the native C struct
-	struc *C.struct_shout
+	struc    *C.struct_shout
 	metadata *C.struct_shout_metadata_t
-	
+
 	stream chan []byte
 }
 
@@ -131,6 +134,21 @@ func (s *Shout) updateParameters() {
 	// set mount point
 	p = C.CString(s.Mount)
 	C.shout_set_mount(s.struc, p)
+	C.free(unsafe.Pointer(p))
+
+	// set url
+	p = C.CString(s.Description)
+	C.shout_set_description(s.struc, p)
+	C.free(unsafe.Pointer(p))
+
+	// set genre
+	p = C.CString(s.Genre)
+	C.shout_set_genre(s.struc, p)
+	C.free(unsafe.Pointer(p))
+
+	// set description
+	p = C.CString(s.Description)
+	C.shout_set_description(s.struc, p)
 	C.free(unsafe.Pointer(p))
 
 	// set format
@@ -193,13 +211,13 @@ func (s *Shout) handleStream() {
 	}
 }
 
-func (s *Shout) UpdateMetadata( mname string, mvalue string ) {
+func (s *Shout) UpdateMetadata(mname string, mvalue string) {
 	md := C.shout_metadata_new()
 	ptr1 := C.CString(mname)
 	ptr2 := C.CString(mvalue)
-	C.shout_metadata_add( md, ptr1, ptr2 )
+	C.shout_metadata_add(md, ptr1, ptr2)
 	C.free(unsafe.Pointer(ptr1))
 	C.free(unsafe.Pointer(ptr2))
-	C.shout_set_metadata( s.struc, md )
+	C.shout_set_metadata(s.struc, md)
 	C.shout_metadata_free(md)
 }
